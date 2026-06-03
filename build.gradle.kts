@@ -1,4 +1,4 @@
-import xyz.jpenilla.gremlin.gradle.WriteDependencySet
+import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
 
 plugins {
     alias(libs.plugins.kotlin)
@@ -6,12 +6,12 @@ plugins {
     alias(libs.plugins.userdev)
     alias(libs.plugins.runtask)
     alias(libs.plugins.resourcefactory)
-    alias(libs.plugins.gremlin)
+    alias(libs.plugins.resourcefactory.bukkit)
 }
 
 group = "lol.simeon"
-version = "1.0-SNAPSHOT"
-description = "Fake the server-side implementation of JustEnoughItems for Paper"
+version = "1.2-SNAPSHOT"
+description = "Send recipe data from the server to clients needed for some client-side mods."
 
 repositories {
     mavenCentral()
@@ -19,23 +19,13 @@ repositories {
 
 dependencies {
     paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
-    runtimeDownload(libs.stdlib)
+    implementation(libs.stdlib)
 }
 
-gremlin {
-    defaultJarRelocatorDependencies.set(true)
-    defaultGremlinRuntimeDependency.set(true)
-}
-
-configurations.compileOnly {
-    extendsFrom(configurations.runtimeDownload.get())
-}
-
-tasks.withType<WriteDependencySet> {
-    outputFileName.set("jep-dependencies.txt")
-    repos.add("https://repo.papermc.io/repository/maven-public/")
-    repos.add("https://repo.maven.apache.org/maven2/")
-    repos.add("https://repo.triumphteam.dev/snapshots/")
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
 }
 
 configure<SourceSetContainer> {
@@ -44,13 +34,30 @@ configure<SourceSetContainer> {
     }
 }
 
+tasks.assemble {
+    dependsOn(tasks.reobfJar)
+}
+
+paperweight.reobfArtifactConfiguration = ReobfArtifactConfiguration.REOBF_PRODUCTION
+
+tasks.reobfJar {
+    outputJar = layout.buildDirectory.file("libs/${project.name}-${project.version}-reobf.jar")
+}
+
 paperPluginYaml {
-    name = "JustEnoughPaper"
+    name = "JustEnoughRecipes"
     this.version = project.version.toString()
     this.description = project.description.toString()
     apiVersion = "1.21"
-    main = "lol.simeon.jep.JustEnoughPaper"
+    main = "lol.simeon.jer.JustEnoughRecipes"
     author = "DerSimeon"
-    loader = "lol.simeon.jep.boot.JepPluginLoader"
-    bootstrapper = "lol.simeon.jep.boot.JepBootstrapper"
+}
+
+bukkitPluginYaml {
+    name = "JustEnoughRecipes"
+    this.version = project.version.toString()
+    this.description = project.description.toString()
+    apiVersion = "1.21"
+    main = "lol.simeon.jer.JustEnoughRecipes"
+    author = "DerSimeon"
 }

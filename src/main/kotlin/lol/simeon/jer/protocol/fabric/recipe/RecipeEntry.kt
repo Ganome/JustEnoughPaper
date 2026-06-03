@@ -1,4 +1,4 @@
-package lol.simeon.jep.protocol.packet
+package lol.simeon.jer.protocol.fabric.recipe
 
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries

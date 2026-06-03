@@ -1,5 +1,6 @@
-package lol.simeon.jep.protocol.packet
+package lol.simeon.jer.protocol.fabric.packet
 
+import lol.simeon.jer.protocol.fabric.recipe.RecipeEntry
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
@@ -14,7 +15,7 @@ class RecipeSyncPayload(val entries: List<RecipeEntry>) : CustomPacketPayload {
             CustomPacketPayload.Type(Identifier.fromNamespaceAndPath("fabric", "recipe_sync"))
 
         val CODEC: StreamCodec<RegistryFriendlyByteBuf, RecipeSyncPayload> =
-            RecipeEntry.CODEC
+            RecipeEntry.Companion.CODEC
                 .apply(ByteBufCodecs.list())
                 .map(::RecipeSyncPayload, RecipeSyncPayload::entries)
     }

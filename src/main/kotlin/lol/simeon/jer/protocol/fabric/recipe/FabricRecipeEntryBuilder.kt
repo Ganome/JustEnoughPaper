@@ -1,21 +1,17 @@
-package lol.simeon.jep.protocol
+package lol.simeon.jer.protocol.fabric.recipe
 
-import lol.simeon.jep.protocol.packet.RecipeEntry
-import net.minecraft.server.MinecraftServer
 import net.minecraft.world.item.crafting.RecipeHolder
 import net.minecraft.world.item.crafting.RecipeSerializer
 import org.bukkit.Bukkit
 import org.bukkit.craftbukkit.CraftServer
 
-object RecipeEntryBuilder {
+object FabricRecipeEntryBuilder {
 
     fun buildRecipeSyncEntries(): List<RecipeEntry> {
         val craftServer = Bukkit.getServer() as CraftServer
-        val mcServer: MinecraftServer = craftServer.server
+        val mcServer = craftServer.server
 
-        val recipeManager = mcServer.recipeManager
-
-        val all: Collection<RecipeHolder<*>> = recipeManager.recipes.values()
+        val all: Collection<RecipeHolder<*>> = mcServer.recipeManager.recipes.values()
 
         val grouped: Map<RecipeSerializer<*>, List<RecipeHolder<*>>> = all.groupBy { holder ->
             val recipe = holder.value()

@@ -1,19 +1,19 @@
-package lol.simeon.jep.protocol
+package lol.simeon.jer.protocol.fabric
 
 import io.netty.buffer.Unpooled
-import lol.simeon.jep.protocol.packet.RecipeSyncPayload
+import lol.simeon.jer.protocol.SharedHelper
+import lol.simeon.jer.protocol.fabric.packet.RecipeSyncPayload
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
-import net.minecraft.network.protocol.common.custom.DiscardedPayload
 import net.minecraft.resources.Identifier
 import org.bukkit.craftbukkit.entity.CraftPlayer
 import org.bukkit.entity.Player
 
-object PacketBuilder {
+object FabricPacketBuilder: SharedHelper() {
 
     fun sendRecipeSyncAsDiscarded(player: Player, payload: RecipeSyncPayload) {
         val serverPlayer = (player as CraftPlayer).handle
-        val connection = serverPlayer.connection.connection
+        val connection = scanForNetworkManager(serverPlayer.connection)
 
         val registryAccess = serverPlayer.registryAccess()
         val nettyBuf = Unpooled.buffer()
@@ -26,7 +26,7 @@ object PacketBuilder {
         nettyBuf.readBytes(bytes)
 
         val id = Identifier.fromNamespaceAndPath("fabric", "recipe_sync")
-        val discarded = DiscardedPayload(id, bytes)
+        val discarded = constructDiscardedPayload(id, bytes)
 
         connection.send(ClientboundCustomPayloadPacket(discarded))
     }
