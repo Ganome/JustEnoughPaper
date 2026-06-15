@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "lol.simeon"
-version = "1.0.1"
+version = "1.3-SNAPSHOT"
 description = "Fake the server-side implementation of JustEnoughItems for Paper"
 
 repositories {
